@@ -1,6 +1,6 @@
-import app from "./app";
-import config from "./appp/config";
-import mongoose from "mongoose";
+import app from './app';
+import config from './appp/config';
+import mongoose from 'mongoose';
 
 // main().catch(err => console.log(err));
 
