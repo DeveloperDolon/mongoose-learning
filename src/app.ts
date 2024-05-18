@@ -13,7 +13,7 @@ app.use('/api/v1/students', StudentRoutes);
 app.get('/', (req: Request, res: Response) => {
   const a = 10;
 
-  console.log(a, 'somethingnew');
+  console.log(a, 'something-new');
 
   res.send('Hello World!');
 });
