@@ -31,7 +31,23 @@ const getAllStudents = async (req: Request, res: Response) => {
   }
 };
 
+const getSingleStudent = async (req: Request, res: Response) => {
+  try {
+    const studentId = req.params.studentId;
+
+    const result = await StudentServices.getSingleStudentFromDb(studentId);
+    res.status(200).json({
+      success: true,
+      message: 'Student single data retrieved successfully!',
+      data: result,
+    });
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
 export const StudentController = {
   createStudent,
   getAllStudents,
+  getSingleStudent,
 };
