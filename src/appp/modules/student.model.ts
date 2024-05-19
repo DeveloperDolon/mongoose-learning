@@ -4,6 +4,8 @@ import {
   Guardian,
   LocalGuardian,
   Student,
+  StudentMethod,
+  StudentModelR,
   UserName,
 } from './student/student.interface';
 
@@ -40,7 +42,7 @@ const localGuardianSchema = new Schema<LocalGuardian>({
   contactNo: { type: String, required: true },
 });
 
-const studentSchema = new Schema<Student>({
+const studentSchema = new Schema<Student, StudentModelR, StudentMethod>({
   id: { type: String, required: true, unique: true },
   name: {
     type: userNameSchema,
@@ -85,5 +87,10 @@ const studentSchema = new Schema<Student>({
   },
 });
 
-const StudentModel = model<Student>('Students', studentSchema);
+studentSchema.methods.isUserExists = async function (id: string) {
+  const existingUser = await StudentModel.findOne({ id: id });
+
+  return existingUser;
+};
+const StudentModel = model<Student, StudentModelR>('Students', studentSchema);
 export default StudentModel;

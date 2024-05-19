@@ -1,3 +1,5 @@
+import { Model } from 'mongoose';
+
 export type Guardian = {
   fatherName: string;
   fatherOccupation: string;
@@ -37,3 +39,13 @@ export type Student = {
   profileImage?: string;
   isActive: 'active' | 'inactive';
 };
+
+export type StudentMethod = {
+  isUserExists(id: string): Promise<Student | null>;
+};
+
+export type StudentModelR = Model<
+  Student,
+  Record<string, never>,
+  StudentMethod
+>;

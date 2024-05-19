@@ -28,9 +28,10 @@ const createStudent = async (req: Request, res: Response): Promise<void> => {
       data: result,
     });
   } catch (err: unknown) {
+    // console.log(err.message);
     res.status(500).json({
       success: false,
-      message: err,
+      message: err.message || err,
     });
   }
 };
