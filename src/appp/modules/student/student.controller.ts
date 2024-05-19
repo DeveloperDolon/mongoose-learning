@@ -1,9 +1,14 @@
+import studentSchema from './student.joivalidation';
 import { StudentServices } from './student.service';
+import { Request, Response } from 'express';
 
 const createStudent = async (req: Request, res: Response): Promise<void> => {
   try {
     const { student } = req.body;
-    console.log(student);
+
+    // validate student data with joi schema---????
+    const { error, value } = studentSchema.validate(student);
+    console.log(error, 'valued');
 
     const result = await StudentServices.createStudentIntoDB(student);
 
@@ -12,8 +17,11 @@ const createStudent = async (req: Request, res: Response): Promise<void> => {
       message: 'Student is created successfully!',
       data: result,
     });
-  } catch (err) {
-    console.log(err?.message);
+  } catch (err: unknown) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
@@ -27,7 +35,10 @@ const getAllStudents = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err) {
-    console.log(err.message);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
@@ -42,7 +53,10 @@ const getSingleStudent = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err) {
-    console.log(err.message);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 

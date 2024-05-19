@@ -2,7 +2,6 @@ import StudentModel from '../student.model';
 import { Student } from './student.interface';
 
 const createStudentIntoDB = async (student: Student) => {
-  console.log('my name is dolon chandra roy');
   const result = await StudentModel.create(student);
   return result;
 };
