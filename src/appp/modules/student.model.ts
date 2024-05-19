@@ -4,7 +4,10 @@ import {
   Guardian,
   LocalGuardian,
   Student,
+  StudentAnoModel,
   StudentMethod,
+  StudentMethodForStatic,
+  StudentModelForStatic,
   StudentModelR,
   UserName,
 } from './student/student.interface';
@@ -42,7 +45,12 @@ const localGuardianSchema = new Schema<LocalGuardian>({
   contactNo: { type: String, required: true },
 });
 
-const studentSchema = new Schema<Student, StudentModelR, StudentMethod>({
+const studentSchema = new Schema<
+  Student,
+  // StudentModelR,
+  // StudentMethod,
+  StudentAnoModel
+>({
   id: { type: String, required: true, unique: true },
   name: {
     type: userNameSchema,
@@ -87,10 +95,20 @@ const studentSchema = new Schema<Student, StudentModelR, StudentMethod>({
   },
 });
 
-studentSchema.methods.isUserExists = async function (id: string) {
-  const existingUser = await StudentModel.findOne({ id: id });
-
+//creating a custom static method
+studentSchema.statics.isUserExistStudent = async function (id: string) {
+  const existingUser = await StudentModel.findOne({ id });
   return existingUser;
 };
-const StudentModel = model<Student, StudentModelR>('Students', studentSchema);
+
+// creating a custom instance method
+// studentSchema.methods.studentSchema.methods.isUserExists = async function (
+//   id: string,
+// ) {
+//   const existingUser = await StudentModel.findOne({ id: id });
+
+//   return existingUser;
+// };
+
+const StudentModel = model<Student, StudentAnoModel>('Students', studentSchema);
 export default StudentModel;

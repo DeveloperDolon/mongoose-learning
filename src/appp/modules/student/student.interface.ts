@@ -40,6 +40,12 @@ export type Student = {
   isActive: 'active' | 'inactive';
 };
 
+// for creating static......>
+export interface StudentAnoModel extends Model<Student> {
+  isUserExistStudent(id: string): Promise<Student | null>;
+}
+
+// for creating instance
 export type StudentMethod = {
   isUserExists(id: string): Promise<Student | null>;
 };
