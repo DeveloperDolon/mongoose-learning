@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 import validator from 'validator';
 import {
   Guardian,
@@ -53,59 +53,73 @@ const studentSchema = new Schema<
   // StudentModelR,
   // StudentMethod,
   StudentAnoModel
->({
-  id: { type: String, required: true, unique: true },
-  password: {
-    type: String,
-    required: [true, 'Password is required.'],
-    unique: true,
-    maxlength: [20, 'Password can not be more than 20 character.'],
-  },
-  name: {
-    type: userNameSchema,
-    required: [true, 'First name must need include.'],
-  },
-  avatar: { type: String },
-  gender: {
-    type: String,
-    enum: {
-      values: ['male', 'female', 'other'],
-      message:
-        'The gender field must need to be one thing male, female or other.',
+>(
+  {
+    id: { type: String, required: true, unique: true },
+    password: {
+      type: String,
+      required: [true, 'Password is required.'],
+      unique: true,
+      maxlength: [20, 'Password can not be more than 20 character.'],
     },
-    required: true,
-  },
-  dateOfBirth: String,
-  email: { type: String, required: true },
-  contactNumber: { type: String, required: true },
-  emergencyContactNo: { type: String, required: true },
-  bloodGroup: {
-    type: String,
-    enum: {
-      values: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O-', 'O+'],
-      message: `{VALUE} is not valid.`,
+    name: {
+      type: userNameSchema,
+      required: [true, 'First name must need include.'],
+    },
+    avatar: { type: String },
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female', 'other'],
+        message:
+          'The gender field must need to be one thing male, female or other.',
+      },
+      required: true,
+    },
+    dateOfBirth: String,
+    email: { type: String, required: true },
+    contactNumber: { type: String, required: true },
+    emergencyContactNo: { type: String, required: true },
+    bloodGroup: {
+      type: String,
+      enum: {
+        values: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O-', 'O+'],
+        message: `{VALUE} is not valid.`,
+      },
+    },
+    presentAddress: { type: String, required: true },
+    permanentAddress: { type: String, required: true },
+    guardian: {
+      type: guardianSchema,
+      required: true,
+    },
+    localGuardian: {
+      type: localGuardianSchema,
+      required: true,
+    },
+    profileImage: { type: String },
+    isActive: {
+      type: String,
+      enum: ['active', 'inactive'],
+      default: 'active',
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
-  presentAddress: { type: String, required: true },
-  permanentAddress: { type: String, required: true },
-  guardian: {
-    type: guardianSchema,
-    required: true,
+  {
+    toJSON: {
+      virtuals: true,
+    },
   },
-  localGuardian: {
-    type: localGuardianSchema,
-    required: true,
-  },
-  profileImage: { type: String },
-  isActive: {
-    type: String,
-    enum: ['active', 'inactive'],
-    default: 'active',
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
+);
+
+// mongoose virtual --------------------<>
+studentSchema.virtual('fullName').get(function () {
+  return (
+    this.name.firstName + ' ' + this.name.middleName + ' ' + this.name.lastName
+  );
 });
 
 // pre save middleware / hook : will work on create() and save()
@@ -132,6 +146,21 @@ studentSchema.post('save', function (doc, next: NextFunction) {
 // query middleware =======>
 studentSchema.pre('find', function (next) {
   this.find({ isDeleted: { $ne: true } });
+
+  next();
+});
+
+studentSchema.pre('findOne', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+
+  next();
+});
+
+studentSchema.pre('aggregate', function (next) {
+  // this.find({ isDeleted: { $ne: true } });
+  // console.log(this.pipeline());
+
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
 
   next();
 });
