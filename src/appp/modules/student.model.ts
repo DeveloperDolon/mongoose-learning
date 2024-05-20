@@ -11,6 +11,9 @@ import {
   StudentModelR,
   UserName,
 } from './student/student.interface';
+import bcrypt from 'bcrypt';
+import config from '../config';
+import { NextFunction } from 'express';
 
 const userNameSchema = new Schema<UserName>({
   firstName: {
@@ -52,6 +55,12 @@ const studentSchema = new Schema<
   StudentAnoModel
 >({
   id: { type: String, required: true, unique: true },
+  password: {
+    type: String,
+    required: [true, 'Password is required.'],
+    unique: true,
+    maxlength: [20, 'Password can not be more than 20 character.'],
+  },
   name: {
     type: userNameSchema,
     required: [true, 'First name must need include.'],
@@ -93,6 +102,38 @@ const studentSchema = new Schema<
     enum: ['active', 'inactive'],
     default: 'active',
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+// pre save middleware / hook : will work on create() and save()
+studentSchema.pre('save', async function (next: NextFunction) {
+  // console.log(this, 'pre hook : we will save sate the data');
+
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this;
+
+  // hashing password and save into db
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
+
+// post save middleware / hook
+studentSchema.post('save', function (doc, next: NextFunction) {
+  doc.password = '';
+  next();
+});
+
+// query middleware =======>
+studentSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+
+  next();
 });
 
 //creating a custom static method

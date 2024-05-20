@@ -31,7 +31,7 @@ const createStudent = async (req: Request, res: Response): Promise<void> => {
     // console.log(err.message);
     res.status(500).json({
       success: false,
-      message: err.message || err,
+      message: err?.name === 'ZodError' ? err : err?.message,
     });
   }
 };
@@ -71,8 +71,28 @@ const getSingleStudent = async (req: Request, res: Response) => {
   }
 };
 
+// delete student using id.......
+const deleteStudentWithId = async (req: Request, res: Response) => {
+  try {
+    const studentId = req.params.studentId;
+
+    const result = await StudentServices.deleteStudentFromDb(studentId);
+    res.status(200).json({
+      success: true,
+      message: 'Student data deleted successfully!',
+      data: result,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 export const StudentController = {
   createStudent,
   getAllStudents,
   getSingleStudent,
+  deleteStudentWithId,
 };
