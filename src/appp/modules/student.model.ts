@@ -1,14 +1,10 @@
-import mongoose, { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import validator from 'validator';
 import {
   Guardian,
   LocalGuardian,
   Student,
   StudentAnoModel,
-  StudentMethod,
-  StudentMethodForStatic,
-  StudentModelForStatic,
-  StudentModelR,
   UserName,
 } from './student/student.interface';
 import bcrypt from 'bcrypt';
@@ -56,11 +52,11 @@ const studentSchema = new Schema<
 >(
   {
     id: { type: String, required: true, unique: true },
-    password: {
-      type: String,
-      required: [true, 'Password is required.'],
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User id is required.'],
       unique: true,
-      maxlength: [20, 'Password can not be more than 20 character.'],
+      ref: 'User',
     },
     name: {
       type: userNameSchema,
@@ -98,11 +94,6 @@ const studentSchema = new Schema<
       required: true,
     },
     profileImage: { type: String },
-    isActive: {
-      type: String,
-      enum: ['active', 'inactive'],
-      default: 'active',
-    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -120,27 +111,6 @@ studentSchema.virtual('fullName').get(function () {
   return (
     this.name.firstName + ' ' + this.name.middleName + ' ' + this.name.lastName
   );
-});
-
-// pre save middleware / hook : will work on create() and save()
-studentSchema.pre('save', async function (next: NextFunction) {
-  // console.log(this, 'pre hook : we will save sate the data');
-
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this;
-
-  // hashing password and save into db
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds),
-  );
-  next();
-});
-
-// post save middleware / hook
-studentSchema.post('save', function (doc, next: NextFunction) {
-  doc.password = '';
-  next();
 });
 
 // query middleware =======>

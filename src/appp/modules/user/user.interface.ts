@@ -4,5 +4,11 @@ export type TUser = {
   needsPasswordChange: boolean;
   role: 'admin' | 'student' | 'faculty';
   isDeleted: boolean;
-  status: string;
+  status: 'in-progress' | 'blocked';
+};
+
+export type NewUser = {
+  id: string;
+  role: string;
+  password: string;
 };
