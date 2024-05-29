@@ -7,9 +7,6 @@ import {
   StudentAnoModel,
   UserName,
 } from './student/student.interface';
-import bcrypt from 'bcrypt';
-import config from '../config';
-import { NextFunction } from 'express';
 
 const userNameSchema = new Schema<UserName>({
   firstName: {
@@ -94,10 +91,6 @@ const studentSchema = new Schema<
       required: true,
     },
     profileImage: { type: String },
-    isDeleted: {
-      type: Boolean,
-      default: false,
-    },
   },
   {
     toJSON: {
@@ -113,18 +106,18 @@ studentSchema.virtual('fullName').get(function () {
   );
 });
 
-// query middleware =======>
-studentSchema.pre('find', function (next) {
-  this.find({ isDeleted: { $ne: true } });
+// // query middleware =======>
+// studentSchema.pre('find', function (next) {
+//   this.find({ isDeleted: { $ne: true } });
 
-  next();
-});
+//   next();
+// });
 
-studentSchema.pre('findOne', function (next) {
-  this.find({ isDeleted: { $ne: true } });
+// studentSchema.pre('findOne', function (next) {
+//   this.find({ isDeleted: { $ne: true } });
 
-  next();
-});
+//   next();
+// });
 
 studentSchema.pre('aggregate', function (next) {
   // this.find({ isDeleted: { $ne: true } });

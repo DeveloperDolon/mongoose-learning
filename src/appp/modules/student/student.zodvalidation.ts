@@ -30,29 +30,31 @@ const localGuardianSchema = z.object({
 });
 
 // Student schema
-const studentZodSchema = z.object({
-  id: z.string().nonempty(),
-  password: z.string().max(20),
-  name: userNameSchema,
-  avatar: z.string().optional(),
-  gender: z.enum(['male', 'female', 'other'], {
-    errorMap: () => ({
-      message: 'The gender field must be one of: male, female, or other.',
+const createStudentValidationSchema = z.object({
+  body: z.object({
+    password: z.string().max(20),
+    student: z.object({
+      name: userNameSchema,
+      avatar: z.string().optional(),
+      gender: z.enum(['male', 'female', 'other'], {
+        errorMap: () => ({
+          message: 'The gender field must be one of: male, female, or other.',
+        }),
+      }),
+      dateOfBirth: z.string().optional(),
+      email: z.string().email().nonempty(),
+      contactNumber: z.string().nonempty(),
+      emergencyContactNo: z.string().nonempty(),
+      bloodGroup: z
+        .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O-', 'O+'])
+        .optional(),
+      presentAddress: z.string().nonempty(),
+      permanentAddress: z.string().nonempty(),
+      guardian: guardianSchema,
+      localGuardian: localGuardianSchema,
+      profileImage: z.string().optional(),
     }),
   }),
-  dateOfBirth: z.string().optional(),
-  email: z.string().email().nonempty(),
-  contactNumber: z.string().nonempty(),
-  emergencyContactNo: z.string().nonempty(),
-  bloodGroup: z
-    .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O-', 'O+'])
-    .optional(),
-  presentAddress: z.string().nonempty(),
-  permanentAddress: z.string().nonempty(),
-  guardian: guardianSchema,
-  localGuardian: localGuardianSchema,
-  profileImage: z.string().optional(),
-  isDeleted: z.boolean().default(false),
 });
 
-export default studentZodSchema;
+export { createStudentValidationSchema };
