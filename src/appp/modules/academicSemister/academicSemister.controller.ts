@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 import httpStatus from 'http-status';
 import sendResponse from '../utils/sendResponse';
 import catchAsync from '../utils/catchAsync';
-import { AcademicSemesterServices } from './academicSemester.services';
+import { AcademicSemesterServices } from './academicSemester.service';
 
 const createAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
   const result = await AcademicSemesterServices.createAcademicSemesterIntoDB(
