@@ -17,6 +17,23 @@ const createAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+const updateAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
+  const id: string = req.params.id;
+  console.log(req.body);
+  const result = await AcademicSemesterServices.updateAcademicSemesterIntoDB(
+    id,
+    req.body,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Academic semester is updated successful.',
+    data: result,
+  });
+});
+
 export const AcademicSemesterController = {
   createAcademicSemester,
+  updateAcademicSemester,
 };
