@@ -82,6 +82,10 @@ const studentSchema = new Schema<
     },
     presentAddress: { type: String, required: true },
     permanentAddress: { type: String, required: true },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicSemester',
+    },
     guardian: {
       type: guardianSchema,
       required: true,

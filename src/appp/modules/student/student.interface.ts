@@ -40,6 +40,7 @@ export type Student = {
   localGuardian: LocalGuardian;
   profileImage?: string;
   isDeleted: boolean;
+  admissionSemester: Types.ObjectId;
 };
 
 // for creating static......>
